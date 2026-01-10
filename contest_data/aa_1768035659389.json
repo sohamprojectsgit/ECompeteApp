@@ -1,0 +1,21 @@
+{
+    "gameType": "Quiz Challenge",
+    "startTimeFormatted": "2026-01-10 14:30:42",
+    "startTime": 1768035642321,
+    "totalParticipants": 1,
+    "contestName": "aa",
+    "participants": [{
+        "score": 0,
+        "completionTime": 0,
+        "totalAnswers": 1,
+        "completionTimeFormatted": "00:00",
+        "name": "aaaaaaa",
+        "answers": [{
+            "questionId": -1,
+            "answer": "CHEAT_WARNING: Switching windows detected!",
+            "correct": false,
+            "timestamp": 1768035659386
+        }],
+        "correctAnswers": 0
+    }]
+}
