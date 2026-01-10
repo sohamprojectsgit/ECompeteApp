@@ -13,104 +13,60 @@ class ClientGamePanel extends GamePanel implements ClientMessageListener {
     private int currentScore;
     private AbstractGame currentGame;
     private JFrame gameFrame;
+    private volatile boolean isExiting = false;
     
     public ClientGamePanel(MainFrame parent, ContestClient client) {
         super(parent);
         this.client = client;
         this.client.setMessageListener(this);
-        this.timeLimit = client.getTimeLimit() * 60; // Convert to seconds
+        this.timeLimit = client.getTimeLimit() * 60;
         this.startTime = System.currentTimeMillis();
         this.currentScore = 0;
         
-        // Create fullscreen window
         createFullscreenWindow();
     }
     
     private void createFullscreenWindow() {
         gameFrame = new JFrame("E-Compete - Contest");
-        gameFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        gameFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         gameFrame.setUndecorated(true);
         gameFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        gameFrame.setAlwaysOnTop(true);
         
-        // Prevent Alt+Tab and other window switching (keeps focus)
-        gameFrame.setFocusableWindowState(true);
-        
-        // Add window listener to prevent closing except Alt+F4
         gameFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                gameFrame.setAlwaysOnTop(false);
                 confirmExit();
             }
-            
-            @Override
-            public void windowDeactivated(WindowEvent e) {
-                // Immediately regain focus if user tries to switch windows
-                SwingUtilities.invokeLater(() -> {
-                    gameFrame.requestFocus();
-                    gameFrame.toFront();
-                });
-            }
         });
         
-        // Global key listener for Alt+F4
-        KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(new KeyEventDispatcher() {
-            @Override
-            public boolean dispatchKeyEvent(KeyEvent e) {
-                if (e.getID() == KeyEvent.KEY_PRESSED) {
-                    if (e.getKeyCode() == KeyEvent.VK_F4 && e.isAltDown()) {
-                        confirmExit();
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
+        // Alt+F4 support
+        gameFrame.getRootPane().registerKeyboardAction(
+            e -> confirmExit(),
+            KeyStroke.getKeyStroke(KeyEvent.VK_F4, KeyEvent.ALT_DOWN_MASK),
+            JComponent.WHEN_IN_FOCUSED_WINDOW
+        );
         
         JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(Color.WHITE);
         
-        // Header with timer, score, and close button
-        JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(new Color(30, 144, 255));
-        headerPanel.setPreferredSize(new Dimension(900, 60));
-        
-        timerLabel = new JLabel("Time: " + formatTime(timeLimit));
-        timerLabel.setFont(new Font("Arial", Font.BOLD, 24));
-        timerLabel.setForeground(Color.BLACK);
-        timerLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        // Header
+        JPanel headerPanel = new JPanel(new BorderLayout(10, 5));
+        headerPanel.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 10));
         
         scoreLabel = new JLabel("Score: 0");
-        scoreLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        scoreLabel.setForeground(Color.BLACK);
-        scoreLabel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
+        scoreLabel.setFont(new Font("Arial", Font.BOLD, 16));
         
-        JButton closeBtn = new JButton("Exit Contest");
-        closeBtn.setBackground(new Color(220, 20, 60));
-        closeBtn.setForeground(Color.BLACK);
-        closeBtn.setFont(new Font("Arial", Font.BOLD, 14));
-        closeBtn.setFocusPainted(false);
-        closeBtn.setPreferredSize(new Dimension(130, 40));
-        closeBtn.addActionListener(e -> confirmExit());
+        timerLabel = new JLabel("Time: " + formatTime(timeLimit), SwingConstants.CENTER);
+        timerLabel.setFont(new Font("Arial", Font.BOLD, 20));
         
-        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        leftPanel.setBackground(new Color(30, 144, 255));
-        leftPanel.add(scoreLabel);
+        JButton exitBtn = new JButton("Exit Contest");
+        exitBtn.addActionListener(e -> confirmExit());
         
-        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        rightPanel.setBackground(new Color(30, 144, 255));
-        rightPanel.add(closeBtn);
-        
-        headerPanel.add(leftPanel, BorderLayout.WEST);
+        headerPanel.add(scoreLabel, BorderLayout.WEST);
         headerPanel.add(timerLabel, BorderLayout.CENTER);
-        headerPanel.add(rightPanel, BorderLayout.EAST);
+        headerPanel.add(exitBtn, BorderLayout.EAST);
         
         // Game content area
         gameContentPanel = new JPanel(new BorderLayout());
-        gameContentPanel.setBackground(Color.WHITE);
-        
-        // Load appropriate game
         loadGame(client.getGameType());
         
         mainPanel.add(headerPanel, BorderLayout.NORTH);
@@ -118,42 +74,58 @@ class ClientGamePanel extends GamePanel implements ClientMessageListener {
         
         gameFrame.add(mainPanel);
         gameFrame.setVisible(true);
-        gameFrame.requestFocus();
-        gameFrame.toFront();
         
-        // Start countdown
         startCountdown();
     }
     
     private void confirmExit() {
+        if (isExiting) return;
+        
+        gameFrame.setAlwaysOnTop(false);
+        
         int result = JOptionPane.showConfirmDialog(
             gameFrame,
             "Are you sure you want to exit the contest?\nYour progress will be saved.",
             "Exit Contest",
-            JOptionPane.YES_NO_OPTION,
-            JOptionPane.WARNING_MESSAGE
-        );
+            JOptionPane.YES_NO_OPTION);
         
         if (result == JOptionPane.YES_OPTION) {
             exitContest();
+        } else {
+            gameFrame.setAlwaysOnTop(true);
         }
     }
     
     private void exitContest() {
-        if (countdownTimer != null) {
+        if (isExiting) return;
+        isExiting = true;
+        
+        if (countdownTimer != null && countdownTimer.isRunning()) {
             countdownTimer.stop();
         }
         
         long completionTime = System.currentTimeMillis() - startTime;
-        client.sendCompletion(currentScore, completionTime);
+        
+        try {
+            if (client != null) {
+                client.sendCompletion(currentScore, completionTime);
+            }
+        } catch (Exception e) {
+            System.err.println("Error sending completion: " + e.getMessage());
+        }
         
         cleanup();
         
-        if (gameFrame != null) {
-            gameFrame.dispose();
-        }
-        gameFrame.dispose();
-        parent.showPanel("HOME");
+        SwingUtilities.invokeLater(() -> {
+            if (gameFrame != null) {
+                gameFrame.setVisible(false);
+                gameFrame.dispose();
+            }
+            parent.setVisible(true);
+            parent.toFront();
+            parent.requestFocus();
+            parent.showPanel("HOME");
+        });
     }
     
     private void loadGame(String gameType) {
@@ -179,6 +151,11 @@ class ClientGamePanel extends GamePanel implements ClientMessageListener {
     
     private void startCountdown() {
         countdownTimer = new Timer(1000, e -> {
+            if (isExiting) {
+                ((Timer)e.getSource()).stop();
+                return;
+            }
+            
             long elapsed = (System.currentTimeMillis() - startTime) / 1000;
             long remaining = timeLimit - elapsed;
             
@@ -186,10 +163,6 @@ class ClientGamePanel extends GamePanel implements ClientMessageListener {
                 endGame();
             } else {
                 timerLabel.setText("Time: " + formatTime((int)remaining));
-                
-                if (remaining <= 60) {
-                    timerLabel.setForeground(Color.RED);
-                }
             }
         });
         countdownTimer.start();
@@ -202,24 +175,44 @@ class ClientGamePanel extends GamePanel implements ClientMessageListener {
     }
     
     public void updateScore(int points) {
-        currentScore += points;
-        scoreLabel.setText("Score: " + currentScore);
+        if (!isExiting) {
+            currentScore += points;
+            scoreLabel.setText("Score: " + currentScore);
+        }
     }
     
     public void submitAnswer(int questionId, String answer, boolean correct) {
-        client.sendAnswer(questionId, answer, correct);
-        if (correct) {
-            updateScore(10);
+        if (!isExiting && client != null) {
+            try {
+                client.sendAnswer(questionId, answer, correct);
+            } catch (Exception e) {
+                System.err.println("Error submitting answer: " + e.getMessage());
+            }
+            if (correct) {
+                updateScore(10);
+            }
         }
     }
     
     private void endGame() {
-        if (countdownTimer != null) {
+        if (isExiting) return;
+        isExiting = true;
+        
+        if (countdownTimer != null && countdownTimer.isRunning()) {
             countdownTimer.stop();
         }
         
         long completionTime = System.currentTimeMillis() - startTime;
-        client.sendCompletion(currentScore, completionTime);
+        
+        try {
+            if (client != null) {
+                client.sendCompletion(currentScore, completionTime);
+            }
+        } catch (Exception e) {
+            System.err.println("Error sending completion: " + e.getMessage());
+        }
+        
+        gameFrame.setAlwaysOnTop(false);
         
         JOptionPane.showMessageDialog(gameFrame,
             "Contest Completed!\nYour Score: " + currentScore +
@@ -229,33 +222,47 @@ class ClientGamePanel extends GamePanel implements ClientMessageListener {
         
         cleanup();
         
-        if (gameFrame != null) {
-            gameFrame.dispose();
-        }
-        
-        parent.showPanel("HOME");
+        SwingUtilities.invokeLater(() -> {
+            if (gameFrame != null) {
+                gameFrame.setVisible(false);
+                gameFrame.dispose();
+            }
+            parent.setVisible(true);
+            parent.toFront();
+            parent.requestFocus();
+            parent.showPanel("HOME");
+        });
     }
     
     public void completeGame() {
-        endGame();
+        if (!isExiting) {
+            endGame();
+        }
     }
     
     @Override
     public void onMessageReceived(String message) {
-        // Handle server messages if needed
         System.out.println("Server message: " + message);
     }
     
     @Override
     public void cleanup() {
-        if (countdownTimer != null) {
+        if (countdownTimer != null && countdownTimer.isRunning()) {
             countdownTimer.stop();
         }
-        if (client != null) {
-            client.disconnect();
-        }
         if (currentGame != null) {
-            currentGame.cleanup();
+            try {
+                currentGame.cleanup();
+            } catch (Exception e) {
+                System.err.println("Error cleaning up game: " + e.getMessage());
+            }
+        }
+        if (client != null) {
+            try {
+                client.disconnect();
+            } catch (Exception e) {
+                System.err.println("Error disconnecting client: " + e.getMessage());
+            }
         }
     }
 }

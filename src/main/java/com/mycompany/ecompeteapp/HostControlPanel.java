@@ -14,63 +14,51 @@ class HostControlPanel extends GamePanel {
     private JTextArea logArea;
     private Timer updateTimer;
     private JFrame hostFrame;
+    private volatile boolean isExiting = false;
     
     public HostControlPanel(MainFrame parent, ContestServer server) {
         super(parent);
         this.server = server;
-        
-        // Create fullscreen window for host
         createFullscreenWindow();
     }
     
     private void createFullscreenWindow() {
         hostFrame = new JFrame("E-Compete - Host Dashboard");
         hostFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-        hostFrame.setUndecorated(false);
+        hostFrame.setUndecorated(true);
         hostFrame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        hostFrame.setAlwaysOnTop(false);
-        hostFrame.setFocusableWindowState(true);
         
-        // Add window listener
         hostFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
                 stopContest();
             }
-            
-            @Override
-            public void windowDeactivated(WindowEvent e) {
-                // Immediately regain focus if user tries to switch windows
-                SwingUtilities.invokeLater(() -> {
-                    hostFrame.requestFocus();
-                    hostFrame.toFront();
-                });
-            }
         });
         
-        JPanel mainPanel = new JPanel(new BorderLayout());
-        mainPanel.setBackground(Color.WHITE);
+        // Alt+F4 support
+        hostFrame.getRootPane().registerKeyboardAction(
+            e -> stopContest(),
+            KeyStroke.getKeyStroke(KeyEvent.VK_F4, KeyEvent.ALT_DOWN_MASK),
+            JComponent.WHEN_IN_FOCUSED_WINDOW
+        );
+        
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        mainPanel.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
         
         // Header
         JPanel headerPanel = new JPanel(new BorderLayout());
-        headerPanel.setBackground(new Color(34, 139, 34));
-        headerPanel.setPreferredSize(new Dimension(900, 80));
         
-        JLabel titleLabel = new JLabel("Contest Host Dashboard");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 28));
-        titleLabel.setForeground(Color.WHITE);
-        titleLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        JLabel titleLabel = new JLabel("Contest Host Dashboard", SwingConstants.CENTER);
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 24));
         
-        statusLabel = new JLabel("Status: Active | Participants: 0");
+        statusLabel = new JLabel("Status: Active | Participants: 0", SwingConstants.CENTER);
         statusLabel.setFont(new Font("Arial", Font.PLAIN, 14));
-        statusLabel.setForeground(Color.WHITE);
-        statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
         
-        headerPanel.add(titleLabel, BorderLayout.CENTER);
+        headerPanel.add(titleLabel, BorderLayout.NORTH);
         headerPanel.add(statusLabel, BorderLayout.SOUTH);
         
         // Participant Table
-        String[] columns = {"Rank", "Name", "Score", "Completion Time", "Status", "Answers"};
+        String[] columns = {"Rank", "Name", "Score", "Time", "Status", "Answers"};
         tableModel = new DefaultTableModel(columns, 0) {
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -78,37 +66,27 @@ class HostControlPanel extends GamePanel {
         };
         
         participantTable = new JTable(tableModel);
-        participantTable.setRowHeight(30);
-        participantTable.getColumnModel().getColumn(0).setPreferredWidth(50);
-        participantTable.getColumnModel().getColumn(1).setPreferredWidth(150);
-        
+        participantTable.setRowHeight(25);
         JScrollPane tableScroll = new JScrollPane(participantTable);
         tableScroll.setBorder(BorderFactory.createTitledBorder("Live Leaderboard"));
         
         // Log Area
         logArea = new JTextArea(5, 50);
         logArea.setEditable(false);
-        logArea.setFont(new Font("Monospaced", Font.PLAIN, 12));
+        logArea.setFont(new Font("Monospaced", Font.PLAIN, 11));
         JScrollPane logScroll = new JScrollPane(logArea);
         logScroll.setBorder(BorderFactory.createTitledBorder("Activity Log"));
         
-        // Split pane
         JSplitPane splitPane = new JSplitPane(JSplitPane.VERTICAL_SPLIT, tableScroll, logScroll);
-        splitPane.setDividerLocation(450);
+        splitPane.setDividerLocation(400);
         
         // Control Panel
-        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 15, 10));
-        controlPanel.setBackground(Color.WHITE);
+        JPanel controlPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         
         JButton refreshBtn = new JButton("Refresh Data");
         JButton exportBtn = new JButton("Export Results");
         JButton stopBtn = new JButton("Stop Contest");
         JButton backBtn = new JButton("Back to Home");
-        
-        styleButton(refreshBtn, new Color(30, 144, 255));
-        styleButton(exportBtn, new Color(255, 140, 0));
-        styleButton(stopBtn, new Color(220, 20, 60));
-        styleButton(backBtn, new Color(128, 128, 128));
         
         refreshBtn.addActionListener(e -> updateParticipantTable());
         exportBtn.addActionListener(e -> exportResults());
@@ -126,44 +104,43 @@ class HostControlPanel extends GamePanel {
         
         hostFrame.add(mainPanel);
         hostFrame.setVisible(true);
-        hostFrame.requestFocus();
-        hostFrame.toFront();
         
-        // Start auto-update timer
-        updateTimer = new Timer(2000, e -> updateParticipantTable());
+        updateTimer = new Timer(2000, e -> {
+            if (!isExiting) {
+                updateParticipantTable();
+            }
+        });
         updateTimer.start();
         
         addLog("Contest started successfully!");
         updateParticipantTable();
     }
     
-    private void styleButton(JButton btn, Color color) {
-        btn.setPreferredSize(new Dimension(140, 35));
-        btn.setBackground(color);
-        btn.setForeground(Color.WHITE);
-        btn.setFont(new Font("Arial", Font.BOLD, 12));
-        btn.setFocusPainted(false);
-    }
-    
     private void updateParticipantTable() {
-        tableModel.setRowCount(0);
+        if (isExiting) return;
         
-        java.util.List<ParticipantData> leaderboard = server.getContestData().getLeaderboard();
-        statusLabel.setText("Status: Active | Participants: " + leaderboard.size());
-        
-        int rank = 1;
-        for (ParticipantData p : leaderboard) {
-            String status = p.getCompletionTime() > 0 ? "Completed" : "In Progress";
-            String timeStr = p.getCompletionTime() > 0 ? formatTime(p.getCompletionTime()) : "--:--";
+        try {
+            tableModel.setRowCount(0);
             
-            tableModel.addRow(new Object[]{
-                rank++,
-                p.getName(),
-                p.getScore(),
-                timeStr,
-                status,
-                p.toJSON().optInt("correctAnswers", 0) + "/" + p.toJSON().optInt("totalAnswers", 0)
-            });
+            java.util.List<ParticipantData> leaderboard = server.getContestData().getLeaderboard();
+            statusLabel.setText("Status: Active | Participants: " + leaderboard.size());
+            
+            int rank = 1;
+            for (ParticipantData p : leaderboard) {
+                String status = p.getCompletionTime() > 0 ? "Completed" : "In Progress";
+                String timeStr = p.getCompletionTime() > 0 ? formatTime(p.getCompletionTime()) : "--:--";
+                
+                tableModel.addRow(new Object[]{
+                    rank++,
+                    p.getName(),
+                    p.getScore(),
+                    timeStr,
+                    status,
+                    p.toJSON().optInt("correctAnswers", 0) + "/" + p.toJSON().optInt("totalAnswers", 0)
+                });
+            }
+        } catch (Exception e) {
+            System.err.println("Error updating participant table: " + e.getMessage());
         }
     }
     
@@ -175,12 +152,22 @@ class HostControlPanel extends GamePanel {
     }
     
     private void addLog(String message) {
-        String timestamp = new java.text.SimpleDateFormat("HH:mm:ss").format(new Date());
-        logArea.append("[" + timestamp + "] " + message + "\n");
-        logArea.setCaretPosition(logArea.getDocument().getLength());
+        if (isExiting) return;
+        
+        try {
+            String timestamp = new java.text.SimpleDateFormat("HH:mm:ss").format(new Date());
+            logArea.append("[" + timestamp + "] " + message + "\n");
+            logArea.setCaretPosition(logArea.getDocument().getLength());
+        } catch (Exception e) {
+            System.err.println("Error adding log: " + e.getMessage());
+        }
     }
     
     private void exportResults() {
+        if (isExiting) return;
+        
+        hostFrame.setAlwaysOnTop(false);
+        
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setSelectedFile(new File("contest_results.json"));
         
@@ -189,24 +176,37 @@ class HostControlPanel extends GamePanel {
             addLog("Results exported to: " + fileChooser.getSelectedFile().getName());
             JOptionPane.showMessageDialog(hostFrame, "Results exported successfully!");
         }
+        
+        hostFrame.setAlwaysOnTop(true);
     }
     
     private void stopContest() {
+        if (isExiting) return;
+        
+        hostFrame.setAlwaysOnTop(false);
+        
         int result = JOptionPane.showConfirmDialog(hostFrame,
             "Are you sure you want to stop the contest?",
             "Stop Contest",
             JOptionPane.YES_NO_OPTION);
             
         if (result == JOptionPane.YES_OPTION) {
+            isExiting = true;
             cleanup();
             addLog("Contest stopped by host");
-            JOptionPane.showMessageDialog(hostFrame, "Contest stopped. Data has been saved.");
             
-            if (hostFrame != null) {
-                hostFrame.dispose();
-            }
-            
-            parent.showPanel("HOME");
+            SwingUtilities.invokeLater(() -> {
+                if (hostFrame != null) {
+                    hostFrame.setVisible(false);
+                    hostFrame.dispose();
+                }
+                parent.setVisible(true);
+                parent.toFront();
+                parent.requestFocus();
+                parent.showPanel("HOME");
+            });
+        } else {
+            hostFrame.setAlwaysOnTop(true);
         }
     }
     
@@ -216,11 +216,17 @@ class HostControlPanel extends GamePanel {
     
     @Override
     public void cleanup() {
-        if (updateTimer != null) {
+        isExiting = true;
+        
+        if (updateTimer != null && updateTimer.isRunning()) {
             updateTimer.stop();
         }
         if (server != null) {
-            server.stopServer();
+            try {
+                server.stopServer();
+            } catch (Exception e) {
+                System.err.println("Error stopping server: " + e.getMessage());
+            }
         }
     }
 }

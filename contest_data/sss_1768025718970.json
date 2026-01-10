@@ -1,0 +1,16 @@
+{
+    "gameType": "Quiz Challenge",
+    "startTimeFormatted": "2026-01-10 11:44:19",
+    "startTime": 1768025659754,
+    "totalParticipants": 1,
+    "contestName": "sss",
+    "participants": [{
+        "score": 0,
+        "completionTime": 3602,
+        "totalAnswers": 0,
+        "completionTimeFormatted": "00:03",
+        "name": "soh",
+        "answers": [],
+        "correctAnswers": 0
+    }]
+}
