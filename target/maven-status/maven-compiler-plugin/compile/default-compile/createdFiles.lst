@@ -14,7 +14,6 @@ QuizQuestion.class
 JoinPanel.class
 QuizGame.class
 StatsViewer$1.class
-ClientGamePanel$2.class
 HomePanel.class
 HostControlPanel$2.class
 CodeWorldGame.class

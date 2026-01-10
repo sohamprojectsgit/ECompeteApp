@@ -11,6 +11,7 @@ class DebugGame extends AbstractGame {
     private JButton submitBtn;
     private JButton nextBtn;
     private JLabel progressLabel;
+    private volatile boolean isCleanedUp = false;
     
     public DebugGame(ClientGamePanel gamePanel) {
         super(gamePanel);
@@ -137,6 +138,8 @@ class DebugGame extends AbstractGame {
     }
     
     private void loadBug() {
+        if (isCleanedUp) return;
+        
         if (currentBugIndex < bugs.size()) {
             BuggyCode bug = bugs.get(currentBugIndex);
             progressLabel.setText("Bug " + (currentBugIndex + 1) + " of " + bugs.size());
@@ -148,6 +151,8 @@ class DebugGame extends AbstractGame {
     }
     
     private void checkBug() {
+        if (isCleanedUp) return;
+        
         try {
             int line = Integer.parseInt(lineNumberField.getText());
             String errorType = (String) errorTypeBox.getSelectedItem();
@@ -173,6 +178,8 @@ class DebugGame extends AbstractGame {
     }
     
     private void loadNextBug() {
+        if (isCleanedUp) return;
+        
         currentBugIndex++;
         if (currentBugIndex < bugs.size()) {
             loadBug();
@@ -184,6 +191,36 @@ class DebugGame extends AbstractGame {
     
     @Override
     public void cleanup() {
+        if (isCleanedUp) return;
+        isCleanedUp = true;
+        
+        // Disable all interactive components
+        if (submitBtn != null) {
+            submitBtn.setEnabled(false);
+            for (var listener : submitBtn.getActionListeners()) {
+                submitBtn.removeActionListener(listener);
+            }
+        }
+        
+        if (nextBtn != null) {
+            nextBtn.setEnabled(false);
+            for (var listener : nextBtn.getActionListeners()) {
+                nextBtn.removeActionListener(listener);
+            }
+        }
+        
+        if (lineNumberField != null) {
+            lineNumberField.setEnabled(false);
+        }
+        
+        if (errorTypeBox != null) {
+            errorTypeBox.setEnabled(false);
+        }
+        
+        // Clear references
+        bugs = null;
+        
+        System.out.println("DebugGame cleaned up successfully");
     }
 }
 
