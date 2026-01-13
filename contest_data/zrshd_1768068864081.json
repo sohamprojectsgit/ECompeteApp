@@ -1,0 +1,29 @@
+{
+    "gameType": "Quiz Challenge",
+    "startTimeFormatted": "2026-01-10 23:43:36",
+    "startTime": 1768068816927,
+    "totalParticipants": 1,
+    "contestName": "zrshd",
+    "participants": [{
+        "score": 0,
+        "completionTime": 0,
+        "totalAnswers": 2,
+        "completionTimeFormatted": "00:00",
+        "name": "dxfh",
+        "answers": [
+            {
+                "questionId": 0,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768068864073
+            },
+            {
+                "questionId": 5,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768068864074
+            }
+        ],
+        "correctAnswers": 0
+    }]
+}

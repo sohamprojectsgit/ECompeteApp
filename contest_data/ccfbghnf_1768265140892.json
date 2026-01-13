@@ -1,0 +1,71 @@
+{
+    "gameType": "Quiz Challenge",
+    "startTimeFormatted": "2026-01-13 06:14:53",
+    "startTime": 1768265093419,
+    "totalParticipants": 1,
+    "contestName": "ccfbghnf",
+    "participants": [{
+        "score": 10,
+        "completionTime": 0,
+        "totalAnswers": 9,
+        "completionTimeFormatted": "00:00",
+        "name": "aewtfg",
+        "answers": [
+            {
+                "questionId": 0,
+                "answer": "Paris",
+                "correct": true,
+                "timestamp": 1768265140821
+            },
+            {
+                "questionId": 1,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768265140822
+            },
+            {
+                "questionId": 2,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768265140822
+            },
+            {
+                "questionId": 4,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768265140822
+            },
+            {
+                "questionId": 8,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768265140822
+            },
+            {
+                "questionId": 6,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768265140822
+            },
+            {
+                "questionId": 3,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768265140822
+            },
+            {
+                "questionId": 7,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768265140822
+            },
+            {
+                "questionId": 5,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768265140822
+            }
+        ],
+        "correctAnswers": 1
+    }]
+}

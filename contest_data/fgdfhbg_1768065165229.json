@@ -1,0 +1,59 @@
+{
+    "gameType": "Quiz Challenge",
+    "startTimeFormatted": "2026-01-10 22:42:01",
+    "startTime": 1768065121763,
+    "totalParticipants": 1,
+    "contestName": "fgdfhbg",
+    "participants": [{
+        "score": 10,
+        "completionTime": 0,
+        "totalAnswers": 7,
+        "completionTimeFormatted": "00:00",
+        "name": "gjhgf",
+        "answers": [
+            {
+                "questionId": -1,
+                "answer": "BLOCKED: Windows Key (1/8)",
+                "correct": false,
+                "timestamp": 1768065133616
+            },
+            {
+                "questionId": -1,
+                "answer": "BLOCKED: Windows Key (2/8)",
+                "correct": false,
+                "timestamp": 1768065140305
+            },
+            {
+                "questionId": -1,
+                "answer": "BLOCKED: Windows Key (3/8)",
+                "correct": false,
+                "timestamp": 1768065141875
+            },
+            {
+                "questionId": -1,
+                "answer": "BLOCKED: Windows Key (4/8)",
+                "correct": false,
+                "timestamp": 1768065143281
+            },
+            {
+                "questionId": -1,
+                "answer": "BLOCKED: Windows Key (5/8)",
+                "correct": false,
+                "timestamp": 1768065145188
+            },
+            {
+                "questionId": -1,
+                "answer": "BLOCKED: Windows Key (6/8)",
+                "correct": false,
+                "timestamp": 1768065147004
+            },
+            {
+                "questionId": 0,
+                "answer": "Stack",
+                "correct": true,
+                "timestamp": 1768065165228
+            }
+        ],
+        "correctAnswers": 1
+    }]
+}

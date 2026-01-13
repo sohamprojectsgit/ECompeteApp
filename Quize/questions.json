@@ -1,0 +1,64 @@
+{
+  "questions": [
+    {
+      "question": "What is the capital of France?",
+      "options": ["London", "Paris", "Berlin", "Madrid"],
+      "correctAnswer": 1
+    },
+    {
+      "question": "What is 2 + 2?",
+      "options": ["3", "4", "5", "6"],
+      "correctAnswer": 1
+    },
+    {
+      "question": "Which programming language is known for 'Write Once, Run Anywhere'?",
+      "options": ["Python", "Java", "C++", "JavaScript"],
+      "correctAnswer": 1
+    },
+    {
+      "question": "What does HTML stand for?",
+      "options": [
+        "Hyper Text Markup Language",
+        "High Tech Modern Language",
+        "Home Tool Markup Language",
+        "Hyperlinks and Text Markup Language"
+      ],
+      "correctAnswer": 0
+    },
+    {
+      "question": "Which data structure uses LIFO (Last In First Out)?",
+      "options": ["Queue", "Stack", "Array", "Tree"],
+      "correctAnswer": 1
+    },
+    {
+      "question": "What is the time complexity of binary search?",
+      "options": ["O(n)", "O(log n)", "O(n²)", "O(1)"],
+      "correctAnswer": 1
+    },
+    {
+      "question": "Which of these is NOT a valid HTTP method?",
+      "options": ["GET", "POST", "FETCH", "DELETE"],
+      "correctAnswer": 2
+    },
+    {
+      "question": "What does SQL stand for?",
+      "options": [
+        "Structured Query Language",
+        "Simple Question Language",
+        "Structured Question Language",
+        "Simple Query Language"
+      ],
+      "correctAnswer": 0
+    },
+    {
+      "question": "Which symbol is used for comments in Python?",
+      "options": ["//", "#", "/*", "<!--"],
+      "correctAnswer": 1
+    },
+    {
+      "question": "What is the default port for HTTP?",
+      "options": ["21", "22", "80", "443"],
+      "correctAnswer": 2
+    }
+  ]
+}

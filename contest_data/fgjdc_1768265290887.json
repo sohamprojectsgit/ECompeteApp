@@ -1,0 +1,77 @@
+{
+    "gameType": "Quiz Challenge",
+    "startTimeFormatted": "2026-01-13 06:17:50",
+    "startTime": 1768265270962,
+    "totalParticipants": 1,
+    "contestName": "fgjdc",
+    "participants": [{
+        "score": 0,
+        "completionTime": 6801,
+        "totalAnswers": 10,
+        "completionTimeFormatted": "00:06",
+        "name": "xdgdfgnj",
+        "answers": [
+            {
+                "questionId": 0,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768265288547
+            },
+            {
+                "questionId": 3,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768265288547
+            },
+            {
+                "questionId": 2,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768265288547
+            },
+            {
+                "questionId": 1,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768265288547
+            },
+            {
+                "questionId": 6,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768265288547
+            },
+            {
+                "questionId": 8,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768265288548
+            },
+            {
+                "questionId": 5,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768265288547
+            },
+            {
+                "questionId": 4,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768265288547
+            },
+            {
+                "questionId": 7,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768265288548
+            },
+            {
+                "questionId": 9,
+                "answer": "",
+                "correct": false,
+                "timestamp": 1768265288548
+            }
+        ],
+        "correctAnswers": 0
+    }]
+}

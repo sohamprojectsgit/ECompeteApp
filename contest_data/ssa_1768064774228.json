@@ -1,0 +1,35 @@
+{
+    "gameType": "Quiz Challenge",
+    "startTimeFormatted": "2026-01-10 22:35:42",
+    "startTime": 1768064742004,
+    "totalParticipants": 1,
+    "contestName": "ssa",
+    "participants": [{
+        "score": 10,
+        "completionTime": 0,
+        "totalAnswers": 3,
+        "completionTimeFormatted": "00:00",
+        "name": "aa",
+        "answers": [
+            {
+                "questionId": -1,
+                "answer": "BLOCKED: Windows Key",
+                "correct": false,
+                "timestamp": 1768064759828
+            },
+            {
+                "questionId": -1,
+                "answer": "BLOCKED: Windows Key",
+                "correct": false,
+                "timestamp": 1768064763501
+            },
+            {
+                "questionId": 0,
+                "answer": "Structured Query Language",
+                "correct": true,
+                "timestamp": 1768064774227
+            }
+        ],
+        "correctAnswers": 1
+    }]
+}

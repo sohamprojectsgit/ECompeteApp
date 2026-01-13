@@ -1,0 +1,29 @@
+{
+    "gameType": "Quiz Challenge",
+    "startTimeFormatted": "2026-01-10 14:20:21",
+    "startTime": 1768035021425,
+    "totalParticipants": 1,
+    "contestName": "soham",
+    "participants": [{
+        "score": 20,
+        "completionTime": 0,
+        "totalAnswers": 2,
+        "completionTimeFormatted": "00:00",
+        "name": "soh",
+        "answers": [
+            {
+                "questionId": 0,
+                "answer": "Multiple forms of a single entity",
+                "correct": true,
+                "timestamp": 1768035042083
+            },
+            {
+                "questionId": 1,
+                "answer": "O(log n)",
+                "correct": true,
+                "timestamp": 1768035048913
+            }
+        ],
+        "correctAnswers": 2
+    }]
+}

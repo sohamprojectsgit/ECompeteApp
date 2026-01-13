@@ -1,0 +1,77 @@
+{
+    "gameType": "Quiz Challenge",
+    "startTimeFormatted": "2026-01-10 14:30:42",
+    "startTime": 1768035642321,
+    "totalParticipants": 2,
+    "contestName": "aa",
+    "participants": [
+        {
+            "score": 10,
+            "completionTime": 0,
+            "totalAnswers": 3,
+            "completionTimeFormatted": "00:00",
+            "name": "soham",
+            "answers": [
+                {
+                    "questionId": -1,
+                    "answer": "CHEAT_WARNING: Switching windows detected!",
+                    "correct": false,
+                    "timestamp": 1768035756106
+                },
+                {
+                    "questionId": -1,
+                    "answer": "CHEAT_WARNING: Switching windows detected!",
+                    "correct": false,
+                    "timestamp": 1768035760709
+                },
+                {
+                    "questionId": 0,
+                    "answer": "extends",
+                    "correct": true,
+                    "timestamp": 1768035762118
+                }
+            ],
+            "correctAnswers": 1
+        },
+        {
+            "score": 0,
+            "completionTime": 10978,
+            "totalAnswers": 5,
+            "completionTimeFormatted": "00:10",
+            "name": "aaaaaaa",
+            "answers": [
+                {
+                    "questionId": -1,
+                    "answer": "CHEAT_WARNING: Switching windows detected!",
+                    "correct": false,
+                    "timestamp": 1768035740060
+                },
+                {
+                    "questionId": 0,
+                    "answer": "boolean",
+                    "correct": false,
+                    "timestamp": 1768035741118
+                },
+                {
+                    "questionId": -1,
+                    "answer": "CHEAT_WARNING: Switching windows detected!",
+                    "correct": false,
+                    "timestamp": 1768035742027
+                },
+                {
+                    "questionId": -1,
+                    "answer": "CHEAT_WARNING: Windows key is disabled during contest!",
+                    "correct": false,
+                    "timestamp": 1768035744735
+                },
+                {
+                    "questionId": -1,
+                    "answer": "CHEAT_WARNING: Switching windows detected!",
+                    "correct": false,
+                    "timestamp": 1768035744756
+                }
+            ],
+            "correctAnswers": 0
+        }
+    ]
+}

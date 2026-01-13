@@ -1,0 +1,29 @@
+{
+    "gameType": "Problem Solver",
+    "startTimeFormatted": "2026-01-10 14:23:59",
+    "startTime": 1768035239436,
+    "totalParticipants": 1,
+    "contestName": "aaa",
+    "participants": [{
+        "score": 0,
+        "completionTime": 0,
+        "totalAnswers": 2,
+        "completionTimeFormatted": "00:00",
+        "name": "soham",
+        "answers": [
+            {
+                "questionId": 0,
+                "answer": "sfg?kfl>gnvds>kljvjnl",
+                "correct": false,
+                "timestamp": 1768035267849
+            },
+            {
+                "questionId": 1,
+                "answer": "hcxcxmghfvkhj,\n'klhjkhg\nl;jnmlkjh",
+                "correct": false,
+                "timestamp": 1768035282727
+            }
+        ],
+        "correctAnswers": 0
+    }]
+}
